@@ -1,5 +1,3 @@
-export type StudentStatus = "Active" | "Completed" | "Inactive";
-
 export interface Student {
   id: number;
   firstName: string;
@@ -12,10 +10,9 @@ export interface Student {
   startDate: string;
   trainer: string;
   experience: string;
-  status: StudentStatus;
+  status: "Active" | "Completed" | "Inactive";
   score: number;
   pendingAssignments: number;
-  createdAt: string;
 }
 
-export type StudentInput = Omit<Student, "id" | "createdAt">;
+export type StudentInput = Omit<Student, "id">;
