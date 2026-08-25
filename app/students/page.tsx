@@ -2,47 +2,43 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import AppLayout from "@/components/AppLayout";
 
 export default function StudentsPage() {
   const router = useRouter();
   const [students, setStudents] = useState<any[]>([]);
 
   useEffect(() => {
-    // Protect route
     if (localStorage.getItem("isLoggedIn") !== "true") {
       router.push("/login");
       return;
     }
 
-    // Load students
     const data = localStorage.getItem("students");
     if (data) {
       setStudents(JSON.parse(data));
     }
-  }, []);
+  }, [router]);
 
   return (
-    <div style={{ padding: 40, background: "#0f172a", minHeight: "100vh", color: "white" }}>
-      
-      {/* Header */}
+    <AppLayout>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 30 }}>
         <h1>Students List</h1>
         <button
-          onClick={() => router.push("/dashboard")}
+          onClick={() => router.push("/students/add")}
           style={{
-            padding: "8px 16px",
-            background: "#64748b",
+            padding: "10px 20px",
+            background: "#10b981",
             color: "white",
             border: "none",
             borderRadius: 6,
             cursor: "pointer",
           }}
         >
-          ← Back to Dashboard
+          + Add Student
         </button>
       </div>
 
-      {/* Table */}
       <table style={{ width: "100%", borderCollapse: "collapse", background: "#1e293b", borderRadius: 12 }}>
         <thead>
           <tr style={{ background: "#334155" }}>
@@ -51,12 +47,13 @@ export default function StudentsPage() {
             <th style={{ padding: 14, textAlign: "left" }}>Course</th>
             <th style={{ padding: 14, textAlign: "left" }}>Status</th>
             <th style={{ padding: 14, textAlign: "left" }}>Score</th>
+            <th style={{ padding: 14, textAlign: "left" }}>Actions</th>
           </tr>
         </thead>
         <tbody>
           {students.map((student) => (
             <tr key={student.id} style={{ borderBottom: "1px solid #334155" }}>
-              <td style={{ padding: 14 }}>{student.name}</td>
+              <td style={{ padding: 14 }}>{student.name || `${student.firstName || ""} ${student.lastName || ""}`}</td>
               <td style={{ padding: 14 }}>{student.email}</td>
               <td style={{ padding: 14 }}>{student.course}</td>
               <td style={{ padding: 14 }}>
@@ -83,6 +80,25 @@ export default function StudentsPage() {
                 </span>
               </td>
               <td style={{ padding: 14 }}>{student.score}%</td>
+              <td style={{ padding: 14 }}>
+                <button
+                  onClick={() => router.push(`/students/${student.id}`)}
+                  style={{ marginRight: 8, padding: "4px 10px", cursor: "pointer" }}
+                >
+                  View
+                </button>
+                <button
+                  onClick={() => router.push(`/students/${student.id}/edit`)}
+                  style={{ marginRight: 8, padding: "4px 10px", cursor: "pointer" }}
+                >
+                  Edit
+                </button>
+                <button
+                  style={{ padding: "4px 10px", cursor: "pointer", color: "#ef4444" }}
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -93,6 +109,6 @@ export default function StudentsPage() {
           No students found
         </p>
       )}
-    </div>
+    </AppLayout>
   );
 }
