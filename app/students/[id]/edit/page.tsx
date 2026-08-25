@@ -8,7 +8,7 @@ export default function EditStudentPage() {
 
   return (
     <div style={{ padding: 40, color: "white" }}>
-      Edit Student Page — ID: {id}
+      Edit Student — ID: {id}
     </div>
   );
 }
