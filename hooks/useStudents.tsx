@@ -1,7 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Student, StudentInput } from "@/types/student";
+import {
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+
+import {
+  Student,
+  StudentInput,
+} from "@/types/student";
+
 import { studentService } from "@/services/studentService";
 
 export function useStudents() {
@@ -13,7 +22,9 @@ export function useStudents() {
     try {
       setLoading(true);
       setError(null);
+
       const data = await studentService.getStudents();
+
       setStudents(data);
     } catch {
       setError("Unable to load students.");
@@ -27,20 +38,39 @@ export function useStudents() {
   }, [fetchStudents]);
 
   const addStudent = async (data: StudentInput) => {
-    const newStudent = await studentService.createStudent(data);
-    setStudents((prev) => [...prev, newStudent]);
+    const newStudent =
+      await studentService.createStudent(data);
+
+    setStudents((prev) => [
+      ...prev,
+      newStudent,
+    ]);
+
     return newStudent;
   };
 
-  const updateStudent = async (id: number, data: StudentInput) => {
-    const updated = await studentService.updateStudent(id, data);
-    setStudents((prev) => prev.map((s) => (s.id === id ? updated : s)));
+  const updateStudent = async (
+    id: number,
+    data: StudentInput
+  ) => {
+    const updated =
+      await studentService.updateStudent(id, data);
+
+    setStudents((prev) =>
+      prev.map((student) =>
+        student.id === id ? updated : student
+      )
+    );
+
     return updated;
   };
 
   const deleteStudent = async (id: number) => {
     await studentService.deleteStudent(id);
-    setStudents((prev) => prev.filter((s) => s.id !== id));
+
+    setStudents((prev) =>
+      prev.filter((student) => student.id !== id)
+    );
   };
 
   return {

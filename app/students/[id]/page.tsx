@@ -3,96 +3,82 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-import { getStudentById } from "../../../services/studentService";
+import { Student } from "@/types/student";
+import { studentService } from "@/services/studentService";
 
 export default function StudentDetailsPage() {
   const params = useParams();
   const router = useRouter();
 
-  const [student, setStudent] = useState<any>(null);
+  const [student, setStudent] = useState<Student | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadStudent = async () => {
-      const data = await getStudentById(Number(params.id));
-      setStudent(data);
+    const fetchStudent = async () => {
+      try {
+        const id = Number(params.id);
+
+        if (Number.isNaN(id)) {
+          setStudent(null);
+          return;
+        }
+
+        const data = await studentService.getStudentById(id);
+
+        setStudent(data ?? null);
+      } catch (error) {
+        console.error(error);
+        setStudent(null);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    loadStudent();
+    fetchStudent();
   }, [params.id]);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   if (!student) {
-    return <p>Student not found</p>;
+    return (
+      <div>
+        <h1>Student not found</h1>
+
+        <button onClick={() => router.push("/students")}>
+          Back to Students
+        </button>
+      </div>
+    );
   }
 
   return (
-    <div style={{ padding: "30px" }}>
+    <div>
       <h1>Student Details</h1>
 
       <p>
-        <b>Name:</b> {student.firstName} {student.lastName}
+        <strong>ID:</strong> {student.id}
       </p>
 
       <p>
-        <b>Email:</b> {student.email}
+        <strong>Name:</strong> {student.name}
       </p>
 
       <p>
-        <b>Phone:</b> {student.phone}
+        <strong>Email:</strong> {student.email}
       </p>
 
-      <p>
-        <b>Date of Birth:</b> {student.dateOfBirth}
-      </p>
-
-      <p>
-        <b>Course:</b> {student.course}
-      </p>
-
-      <p>
-        <b>Batch:</b> {student.batch}
-      </p>
-
-      <p>
-        <b>Start Date:</b> {student.startDate}
-      </p>
-
-      <p>
-        <b>Trainer:</b> {student.trainer}
-      </p>
-
-      <p>
-        <b>Experience:</b> {student.experience}
-      </p>
-
-      <p>
-        <b>Status:</b> {student.status}
-      </p>
-
-      <p>
-        <b>Score:</b> {student.score}
-      </p>
-
-      <p>
-        <b>Pending Assignments:</b> {student.pendingAssignments}
-      </p>
-
-      <p>
-        <b>Progress:</b> {student.score}%
-      </p>
+      <button onClick={() => router.push("/students")}>
+        Back
+      </button>
 
       <button
         onClick={() =>
           router.push(`/students/${student.id}/edit`)
         }
       >
-        Edit Student
-      </button>
-
-      <button
-        onClick={() => router.push("/students")}
-        style={{ marginLeft: "10px" }}
-      >
-        Back
+        Edit
       </button>
     </div>
   );

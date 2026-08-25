@@ -1,79 +1,105 @@
-import { Student, StudentInput } from "../types/student";
+import { Student, StudentInput } from "@/types/student";
 
-const STORAGE_KEY = "students";
+const STORAGE_KEY = "student-management-students";
 
-export async function getStudents(): Promise<Student[]> {
-  const data = localStorage.getItem(STORAGE_KEY);
+const delay = (ms = 300) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
-  if (!data) {
+function readStudents(): Student[] {
+  if (typeof window === "undefined") {
     return [];
   }
 
-  return JSON.parse(data);
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
 }
 
-export async function getStudentById(
-  id: number
-): Promise<Student | undefined> {
-  const students = await getStudents();
-
-  return students.find((student) => student.id === id);
-}
-
-export async function createStudent(
-  data: StudentInput
-): Promise<Student> {
-  const students = await getStudents();
-
-  const newStudent: Student = {
-    ...data,
-    id: Date.now(),
-  };
-
-  const updatedStudents = [...students, newStudent];
-
+function writeStudents(students: Student[]) {
   localStorage.setItem(
     STORAGE_KEY,
-    JSON.stringify(updatedStudents)
-  );
-
-  return newStudent;
-}
-
-export async function updateStudent(
-  id: number,
-  data: StudentInput
-): Promise<Student> {
-  const students = await getStudents();
-
-  const updatedStudent: Student = {
-    ...data,
-    id,
-  };
-
-  const updatedStudents = students.map((student) =>
-    student.id === id ? updatedStudent : student
-  );
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(updatedStudents)
-  );
-
-  return updatedStudent;
-}
-
-export async function deleteStudent(
-  id: number
-): Promise<void> {
-  const students = await getStudents();
-
-  const updatedStudents = students.filter(
-    (student) => student.id !== id
-  );
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(updatedStudents)
+    JSON.stringify(students)
   );
 }
+
+export const studentService = {
+  async getStudents(): Promise<Student[]> {
+    await delay();
+
+    return readStudents();
+  },
+
+  async getStudentById(
+    id: number
+  ): Promise<Student | undefined> {
+    await delay();
+
+    const students = readStudents();
+
+    return students.find(
+      (student) => Number(student.id) === id
+    );
+  },
+
+  async createStudent(
+    data: StudentInput
+  ): Promise<Student> {
+    await delay();
+
+    const students = readStudents();
+
+    const newStudent: Student = {
+      ...data,
+      id: Date.now(),
+    };
+
+    students.push(newStudent);
+
+    writeStudents(students);
+
+    return newStudent;
+  },
+
+  async updateStudent(
+    id: number,
+    data: StudentInput
+  ): Promise<Student> {
+    await delay();
+
+    const students = readStudents();
+
+    const index = students.findIndex(
+      (student) => Number(student.id) === id
+    );
+
+    if (index === -1) {
+      throw new Error("Student not found");
+    }
+
+    const updatedStudent: Student = {
+      ...students[index],
+      ...data,
+      id: students[index].id,
+    };
+
+    students[index] = updatedStudent;
+
+    writeStudents(students);
+
+    return updatedStudent;
+  },
+
+  async deleteStudent(id: number): Promise<void> {
+    await delay();
+
+    const students = readStudents().filter(
+      (student) => Number(student.id) !== id
+    );
+
+    writeStudents(students);
+  },
+};

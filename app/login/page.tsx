@@ -46,7 +46,7 @@ export default function LoginPage() {
         </button>
 
         <p style={{ color: "#94a3b8", fontSize: 13, textAlign: "center", marginTop: 16 }}>
-          admin@test.com / 123456
+         
         </p>
       </form>
     </div>
