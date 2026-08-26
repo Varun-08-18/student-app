@@ -15,70 +15,76 @@ import {
   Typography,
 } from "@mui/material";
 
-const steps = [
-  "Personal Information",
-  "Course Information",
-  "Confirmation",
-];
+import { StudentInput } from "@/types/student";
+import { COURSE_OPTIONS, EXPERIENCE_OPTIONS } from "@/app/library/constants";
 
-const validationSchemas = [
-  Yup.object({
-    firstName: Yup.string().required("First Name is required"),
-    lastName: Yup.string().required("Last Name is required"),
-    email: Yup.string()
-      .email("Invalid email")
-      .required("Email is required"),
-    phone: Yup.string()
-      .matches(/^[0-9]{10}$/, "Phone must be 10 digits")
-      .required("Phone is required"),
-    dateOfBirth: Yup.string().required("Date of Birth is required"),
-  }),
+const steps = ["Personal Information", "Course Information", "Confirmation"];
 
-  Yup.object({
-    course: Yup.string().required("Course is required"),
-    batch: Yup.string().required("Batch is required"),
-    startDate: Yup.string().required("Start Date is required"),
-    trainer: Yup.string().required("Trainer is required"),
-    experience: Yup.string().required("Experience is required"),
-  }),
+const DEFAULT_VALUES: StudentInput = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  dateOfBirth: "",
+  course: "",
+  batch: "",
+  startDate: "",
+  trainer: "",
+  experience: "",
+  status: "Active",
+  score: 0,
+  pendingAssignments: 0,
+};
 
-  Yup.object({}),
-];
+function buildValidationSchemas(existingEmails: string[]) {
+  return [
+    Yup.object({
+      firstName: Yup.string().required("First Name is required"),
+      lastName: Yup.string().required("Last Name is required"),
+      email: Yup.string()
+        .email("Invalid email")
+        .required("Email is required")
+        .test(
+          "unique-email",
+          "A student with this email already exists",
+          (value) => !value || !existingEmails.includes(value.toLowerCase())
+        ),
+      phone: Yup.string()
+        .matches(/^[0-9]{10}$/, "Phone must be 10 digits")
+        .required("Phone is required"),
+      dateOfBirth: Yup.string().required("Date of Birth is required"),
+    }),
+    Yup.object({
+      course: Yup.string().required("Course is required"),
+      batch: Yup.string().required("Batch is required"),
+      startDate: Yup.string().required("Start Date is required"),
+      trainer: Yup.string().required("Trainer is required"),
+      experience: Yup.string().required("Experience is required"),
+    }),
+    Yup.object({}),
+  ];
+}
 
 interface StudentFormProps {
-  initialValues?: any;
-  onSubmit: (values: any) => void;
+  initialValues?: StudentInput;
+  existingEmails?: string[];
+  onSubmit: (values: StudentInput) => void;
   isEdit?: boolean;
 }
 
 export default function StudentForm({
   initialValues,
+  existingEmails = [],
   onSubmit,
   isEdit = false,
 }: StudentFormProps) {
   const [activeStep, setActiveStep] = useState(0);
+  const validationSchemas = buildValidationSchemas(existingEmails);
 
   const formik = useFormik({
-    initialValues: initialValues || {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      dateOfBirth: "",
-      course: "",
-      batch: "",
-      startDate: "",
-      trainer: "",
-      experience: "",
-      status: "Active",
-      score: 0,
-      pendingAssignments: 0,
-    },
-
+    initialValues: initialValues || DEFAULT_VALUES,
     enableReinitialize: true,
-
     validationSchema: validationSchemas[activeStep],
-
     onSubmit: (values) => {
       if (activeStep < steps.length - 1) {
         setActiveStep(activeStep + 1);
@@ -90,13 +96,22 @@ export default function StudentForm({
 
   const handleNext = async () => {
     const errors = await formik.validateForm();
-
     if (Object.keys(errors).length > 0) {
+      formik.setTouched(
+        Object.keys(errors).reduce((acc, key) => ({ ...acc, [key]: true }), {})
+      );
       return;
     }
-
     setActiveStep(activeStep + 1);
   };
+
+  const fieldProps = (name: keyof StudentInput) => ({
+    name,
+    value: formik.values[name],
+    onChange: formik.handleChange,
+    error: Boolean(formik.touched[name] && formik.errors[name]),
+    helperText: formik.touched[name] ? (formik.errors[name] as string) : undefined,
+  });
 
   return (
     <Box sx={{ maxWidth: 700, margin: "30px auto" }}>
@@ -109,192 +124,74 @@ export default function StudentForm({
       </Stepper>
 
       <form onSubmit={formik.handleSubmit}>
-
-        {/* STEP 1 */}
         {activeStep === 0 && (
           <Box>
-            <TextField
-              fullWidth
-              label="First Name"
-              name="firstName"
-              margin="normal"
-              value={formik.values.firstName}
-              onChange={formik.handleChange}
-            />
-
-            <TextField
-              fullWidth
-              label="Last Name"
-              name="lastName"
-              margin="normal"
-              value={formik.values.lastName}
-              onChange={formik.handleChange}
-            />
-
-            <TextField
-              fullWidth
-              label="Email"
-              name="email"
-              margin="normal"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-            />
-
-            <TextField
-              fullWidth
-              label="Phone"
-              name="phone"
-              margin="normal"
-              value={formik.values.phone}
-              onChange={formik.handleChange}
-            />
-
+            <TextField fullWidth label="First Name" margin="normal" {...fieldProps("firstName")} />
+            <TextField fullWidth label="Last Name" margin="normal" {...fieldProps("lastName")} />
+            <TextField fullWidth label="Email" margin="normal" {...fieldProps("email")} />
+            <TextField fullWidth label="Phone" margin="normal" {...fieldProps("phone")} />
             <TextField
               fullWidth
               label="Date of Birth"
-              name="dateOfBirth"
               type="date"
               margin="normal"
-        
-              value={formik.values.dateOfBirth}
-              onChange={formik.handleChange}
+              slotProps={{ inputLabel: { shrink: true } }}
+              {...fieldProps("dateOfBirth")}
             />
           </Box>
         )}
 
-        {/* STEP 2 */}
         {activeStep === 1 && (
           <Box>
-            <TextField
-              select
-              fullWidth
-              label="Course"
-              name="course"
-              margin="normal"
-              value={formik.values.course}
-              onChange={formik.handleChange}
-            >
-              <MenuItem value="React">React</MenuItem>
-              <MenuItem value="Next.js">Next.js</MenuItem>
-              <MenuItem value="Angular">Angular</MenuItem>
-              <MenuItem value="Node.js">Node.js</MenuItem>
+            <TextField select fullWidth label="Course" margin="normal" {...fieldProps("course")}>
+              {COURSE_OPTIONS.map((course) => (
+                <MenuItem key={course} value={course}>
+                  {course}
+                </MenuItem>
+              ))}
             </TextField>
-
-            <TextField
-              fullWidth
-              label="Batch"
-              name="batch"
-              margin="normal"
-              value={formik.values.batch}
-              onChange={formik.handleChange}
-            />
-
+            <TextField fullWidth label="Batch" margin="normal" {...fieldProps("batch")} />
             <TextField
               fullWidth
               label="Start Date"
-              name="startDate"
               type="date"
               margin="normal"
-              
-              value={formik.values.startDate}
-              onChange={formik.handleChange}
+              slotProps={{ inputLabel: { shrink: true } }}
+              {...fieldProps("startDate")}
             />
-
-            <TextField
-              fullWidth
-              label="Trainer"
-              name="trainer"
-              margin="normal"
-              value={formik.values.trainer}
-              onChange={formik.handleChange}
-            />
-
-            <TextField
-              select
-              fullWidth
-              label="Experience"
-              name="experience"
-              margin="normal"
-              value={formik.values.experience}
-              onChange={formik.handleChange}
-            >
-              <MenuItem value="Fresher">Fresher</MenuItem>
-              <MenuItem value="1 Year">1 Year</MenuItem>
-              <MenuItem value="2 Years">2 Years</MenuItem>
-              <MenuItem value="3+ Years">3+ Years</MenuItem>
+            <TextField fullWidth label="Trainer" margin="normal" {...fieldProps("trainer")} />
+            <TextField select fullWidth label="Experience" margin="normal" {...fieldProps("experience")}>
+              {EXPERIENCE_OPTIONS.map((exp) => (
+                <MenuItem key={exp} value={exp}>
+                  {exp}
+                </MenuItem>
+              ))}
             </TextField>
           </Box>
         )}
 
-        {/* STEP 3 */}
         {activeStep === 2 && (
           <Box>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Confirm Student Details
-            </Typography>
-
-            <Typography>
-              Name: {formik.values.firstName} {formik.values.lastName}
-            </Typography>
-
-            <Typography>
-              Email: {formik.values.email}
-            </Typography>
-
-            <Typography>
-              Phone: {formik.values.phone}
-            </Typography>
-
-            <Typography>
-              Course: {formik.values.course}
-            </Typography>
-
-            <Typography>
-              Batch: {formik.values.batch}
-            </Typography>
-
-            <Typography>
-              Start Date: {formik.values.startDate}
-            </Typography>
-
-            <Typography>
-              Trainer: {formik.values.trainer}
-            </Typography>
-
-            <Typography>
-              Experience: {formik.values.experience}
-            </Typography>
+            <Typography variant="h6" sx={{ mb: 2 }}>Confirm Student Details</Typography>
+            <Typography>Name: {formik.values.firstName} {formik.values.lastName}</Typography>
+            <Typography>Email: {formik.values.email}</Typography>
+            <Typography>Phone: {formik.values.phone}</Typography>
+            <Typography>Course: {formik.values.course}</Typography>
+            <Typography>Batch: {formik.values.batch}</Typography>
+            <Typography>Start Date: {formik.values.startDate}</Typography>
+            <Typography>Trainer: {formik.values.trainer}</Typography>
+            <Typography>Experience: {formik.values.experience}</Typography>
           </Box>
         )}
 
-        {/* BUTTONS */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            mt: 4,
-          }}
-        >
-          <Button
-            type="button"
-            disabled={activeStep === 0}
-            onClick={() => setActiveStep(activeStep - 1)}
-          >
+        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+          <Button type="button" disabled={activeStep === 0} onClick={() => setActiveStep(activeStep - 1)}>
             Back
           </Button>
-
           {activeStep < 2 ? (
-            <Button
-              type="button"
-              variant="contained"
-              onClick={handleNext}
-            >
-              Next
-            </Button>
+            <Button type="button" variant="contained" onClick={handleNext}>Next</Button>
           ) : (
-            <Button type="submit" variant="contained">
-              {isEdit ? "Update Student" : "Submit"}
-            </Button>
+            <Button type="submit" variant="contained">{isEdit ? "Update Student" : "Submit"}</Button>
           )}
         </Box>
       </form>

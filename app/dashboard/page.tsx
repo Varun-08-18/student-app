@@ -1,104 +1,47 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
-import AppLayout from "@/components/AppLayout";
+import { Box, Button, Typography } from "@mui/material";
+
+import AppLayout from "@/components/Applayout/AppLayout";
+import Loading from "@/components/Loading/Loading";
+import StatCard from "@/components/StatCard";
+import { useStudents } from "@/hooks/useStudents";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { computeStudentStats } from "@/app/library/studentStats";
 
 export default function DashboardPage() {
+  useRequireAuth();
   const router = useRouter();
-  const [students, setStudents] = useState<any[]>([]);
+  const { students, loading, error } = useStudents();
 
-  useEffect(() => {
-    if (localStorage.getItem("isLoggedIn") !== "true") {
-      router.push("/login");
-      return;
-    }
-
-    let data = localStorage.getItem("students");
-
-    if (!data) {
-      const sample = [
-        { id: 1, name: "Aman Singh", email: "aman@test.com", course: "React", status: "Active", score: 85 },
-        { id: 2, name: "Riya Sharma", email: "riya@test.com", course: "Next.js", status: "Completed", score: 92 },
-        { id: 3, name: "Rahul Verma", email: "rahul@test.com", course: "TypeScript", status: "Active", score: 78 },
-        { id: 4, name: "Priya Patel", email: "priya@test.com", course: "React", status: "Inactive", score: 65 },
-      ];
-      localStorage.setItem("students", JSON.stringify(sample));
-      data = JSON.stringify(sample);
-    }
-
-    setStudents(JSON.parse(data));
-  }, [router]);
-
-  const total = students.length;
-  const active = students.filter((s) => s.status === "Active").length;
-  const completed = students.filter((s) => s.status === "Completed").length;
-  const avgScore =
-    total > 0
-      ? Math.round(students.reduce((sum, s) => sum + (s.score || 0), 0) / total)
-      : 0;
+  const stats = useMemo(() => computeStudentStats(students), [students]);
 
   return (
     <AppLayout>
-      <h1 style={{ marginBottom: 30 }}>Dashboard</h1>
+      <Typography variant="h5" sx={{ mb: 3 }}>Dashboard</Typography>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 20,
-          marginBottom: 40,
-        }}
-      >
-        <div style={{ background: "#1e293b", padding: 24, borderRadius: 12 }}>
-          <p style={{ color: "#94a3b8", margin: 0 }}>Total Students</p>
-          <h2>{total}</h2>
-        </div>
+      {loading ? (
+        <Loading label="Loading dashboard..." />
+      ) : error ? (
+        <Typography color="error">{error}</Typography>
+      ) : (
+        <>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, mb: 4 }}>
+            <StatCard title="Total Students" value={stats.total} />
+            <StatCard title="Active Students" value={stats.active} />
+            <StatCard title="Completed Students" value={stats.completed} />
+            <StatCard title="Average Score" value={`${stats.avgScore}%`} />
+            <StatCard title="Pending Assignments" value={stats.pendingAssignments} />
+          </Box>
 
-        <div style={{ background: "#1e293b", padding: 24, borderRadius: 12 }}>
-          <p style={{ color: "#94a3b8", margin: 0 }}>Active</p>
-          <h2>{active}</h2>
-        </div>
-
-        <div style={{ background: "#1e293b", padding: 24, borderRadius: 12 }}>
-          <p style={{ color: "#94a3b8", margin: 0 }}>Completed</p>
-          <h2>{completed}</h2>
-        </div>
-
-        <div style={{ background: "#1e293b", padding: 24, borderRadius: 12 }}>
-          <p style={{ color: "#94a3b8", margin: 0 }}>Avg Score</p>
-          <h2>{avgScore}%</h2>
-        </div>
-      </div>
-
-      <button
-        onClick={() => router.push("/students")}
-        style={{
-          padding: "12px 24px",
-          background: "#3b82f6",
-          color: "white",
-          border: "none",
-          borderRadius: 6,
-          marginRight: 12,
-          cursor: "pointer",
-        }}
-      >
-        View Students
-      </button>
-
-      <button
-        onClick={() => router.push("/students/add")}
-        style={{
-          padding: "12px 24px",
-          background: "#10b981",
-          color: "white",
-          border: "none",
-          borderRadius: 6,
-          cursor: "pointer",
-        }}
-      >
-        Add Student
-      </button>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Button variant="contained" onClick={() => router.push("/students")}>View Students</Button>
+            <Button variant="contained" color="success" onClick={() => router.push("/students/add")}>Add Student</Button>
+          </Box>
+        </>
+      )}
     </AppLayout>
   );
 }
