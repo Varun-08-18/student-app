@@ -19,8 +19,8 @@ export default function Sidebar() {
       sx={{
         width: 220,
         minHeight: "100vh",
-        backgroundColor: "#1e293b",
-        borderRight: "1px solid #334155",
+        backgroundColor: "#ffffff",
+        borderRight: "1px solid #dce8e3",
         padding: 2,
         color: "white",
       }}
@@ -38,10 +38,10 @@ export default function Sidebar() {
           sx={{
             justifyContent: "flex-start",
             mb: 1,
-            color: pathname === item.path ? "#60a5fa" : "#e2e8f0",
-            backgroundColor: pathname === item.path ? "#334155" : "transparent",
+            color: pathname === item.path ? "#167c6a" : "#526b66",
+            backgroundColor: pathname === item.path ? "#e8f3ef" : "transparent",
             "&:hover": {
-              backgroundColor: "#334155",
+              backgroundColor: "#eef6f3",
             },
           }}
         >

@@ -17,7 +17,7 @@ export default function StudentTableActions({
   return (
     <Box sx={{ display: "flex", gap: 0.5 }}>
       <Tooltip title="View">
-        <IconButton size="small" onClick={onView} sx={{ color: "#93c5fd" }}>
+        <IconButton size="small" onClick={onView} sx={{ color: "#249b86" }}>
           <VisibilityIcon fontSize="small" />
         </IconButton>
       </Tooltip>

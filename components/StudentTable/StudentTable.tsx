@@ -1,7 +1,7 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Box, Typography } from "@mui/material";
 import { Student } from "@/types/student";
-import StatusBadge from "../../components/StatusBadge/StatusBadge";
+import StatusBadge from "@/components/StatusBadge/StatusBadge";
 import StudentTableActions from "../../components/StudentTableActions/StudentTableActions";
 
 interface StudentTableProps {
@@ -62,13 +62,13 @@ export default function StudentTable({
   if (students.length === 0) {
     return (
       <Box sx={{ textAlign: "center", py: 6 }}>
-        <Typography color="#94a3b8">No students found.</Typography>
+        <Typography color="#617872">No students found.</Typography>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ backgroundColor: "#1e293b", borderRadius: 2 }}>
+    <Box sx={{ backgroundColor: "#ffffff", borderRadius: 2 }}>
       <DataGrid
         rows={students}
         columns={columns}
@@ -79,10 +79,10 @@ export default function StudentTable({
         disableRowSelectionOnClick
         sx={{
           border: "none",
-          color: "white",
-          "& .MuiDataGrid-columnHeaders": { backgroundColor: "#334155" },
-          "& .MuiDataGrid-cell": { borderColor: "#334155" },
-          "& .MuiDataGrid-footerContainer": { borderColor: "#334155" },
+          color: "#1f2933",
+          "& .MuiDataGrid-columnHeaders": { backgroundColor: "#e8f3ef" },
+          "& .MuiDataGrid-cell": { borderColor: "#dce8e3" },
+          "& .MuiDataGrid-footerContainer": { borderColor: "#dce8e3" },
         }}
       />
     </Box>

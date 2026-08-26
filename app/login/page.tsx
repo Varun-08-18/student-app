@@ -19,9 +19,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#0f172a" }}>
-      <form onSubmit={handleLogin} style={{ background: "#1e293b", padding: 40, borderRadius: 12, width: 360 }}>
-        <h2 style={{ color: "white", textAlign: "center", marginBottom: 24 }}>Student App Login</h2>
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#f4f8f6" }}>
+      <form onSubmit={handleLogin} style={{ background: "#ffffff", padding: 40, borderRadius: 12, width: 360 }}>
+        <h2 style={{ color: "#183b36", textAlign: "center", marginBottom: 24 }}>Student App Login</h2>
         
         <input
           type="email"
@@ -41,7 +41,7 @@ export default function LoginPage() {
           style={{ width: "100%", padding: 12, marginBottom: 20, borderRadius: 6, border: "none" }}
         />
         
-        <button type="submit" style={{ width: "100%", padding: 12, background: "#3b82f6", color: "white", border: "none", borderRadius: 6, cursor: "pointer" }}>
+        <button type="submit" style={{ width: "100%", padding: 12, background: "#167c6a", color: "white", border: "none", borderRadius: 6, cursor: "pointer" }}>
           Login
         </button>
 

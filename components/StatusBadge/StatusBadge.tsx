@@ -2,9 +2,9 @@ import { Chip } from "@mui/material";
 import { Student } from "@/types/student";
 
 const STATUS_COLORS: Record<Student["status"], { bg: string; text: string }> = {
-  Active: { bg: "#064e3b", text: "#6ee7b7" },
-  Completed: { bg: "#1e3a8a", text: "#93c5fd" },
-  Inactive: { bg: "#7c2d12", text: "#fdba74" },
+  Active: { bg: "#d8f2e8", text: "#12634f" },
+  Completed: { bg: "#e4edf8", text: "#315d88" },
+  Inactive: { bg: "#fbe8dc", text: "#9a4d25" },
 };
 
 export default function StatusBadge({ status }: { status: Student["status"] }) {

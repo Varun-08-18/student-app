@@ -20,9 +20,9 @@ export default function Header() {
         justifyContent: "space-between",
         alignItems: "center",
         padding: "12px 24px",
-        backgroundColor: "#0f172a",
-        borderBottom: "1px solid #334155",
-        color: "white",
+        backgroundColor: "#ffffff",
+        borderBottom: "1px solid #dce8e3",
+        color: "#1f2933",
       }}
     >
       <Typography variant="h6">Student Management</Typography>

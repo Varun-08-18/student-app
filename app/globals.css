@@ -1,21 +1,36 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f8f6;
+  color: #1f2933;
+}
+
+/* ==================== LOGIN ==================== */
 
 .login-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: linear-gradient(135deg, #e8f3ef 0%, #f4f8f6 100%);
   padding: 20px;
 }
 
 .login-card {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: #ffffff;
+  border: 1px solid #dce8e3;
   border-radius: 16px;
   padding: 40px;
   width: 100%;
   max-width: 420px;
-  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
 }
 
 .login-header {
@@ -26,12 +41,12 @@
 .login-header h1 {
   font-size: 28px;
   font-weight: 700;
-  color: #f8fafc;
+  color: #183b36;
   margin: 0 0 8px 0;
 }
 
 .login-header p {
-  color: #94a3b8;
+  color: #526b66;
   margin: 0;
 }
 
@@ -50,22 +65,23 @@
 .form-group label {
   font-size: 14px;
   font-weight: 500;
-  color: #cbd5e1;
+  color: #334155;
 }
 
 .form-group input {
   padding: 12px 14px;
   border-radius: 8px;
-  border: 1px solid #334155;
-  background: #0f172a;
-  color: #f1f5f9;
+  border: 1px solid #c8d9d3;
+  background: #ffffff;
+  color: #1f2933;
   font-size: 15px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .form-group input:focus {
-  border-color: #3b82f6;
+  border-color: #249b86;
+  box-shadow: 0 0 0 3px rgba(36, 155, 134, 0.12);
 }
 
 .login-btn {
@@ -73,7 +89,7 @@
   padding: 14px;
   border: none;
   border-radius: 8px;
-  background: #3b82f6;
+  background: #167c6a;
   color: white;
   font-size: 16px;
   font-weight: 600;
@@ -82,7 +98,7 @@
 }
 
 .login-btn:hover:not(:disabled) {
-  background: #2563eb;
+  background: #116052;
 }
 
 .login-btn:disabled {
@@ -91,8 +107,9 @@
 }
 
 .error-message {
-  background: #7f1d1d;
-  color: #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
   padding: 12px;
   border-radius: 8px;
   font-size: 14px;
@@ -106,11 +123,12 @@
   color: #64748b;
 }
 
-/* ========== Dashboard Layout ========== */
+/* ==================== DASHBOARD LAYOUT ==================== */
+
 .dashboard-layout {
   display: flex;
   min-height: 100vh;
-  background: #0f172a;
+  background: #f4f8f6;
 }
 
 .main-content {
@@ -118,13 +136,17 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: #f4f8f6;
 }
 
 .dashboard-content {
   padding: 24px 32px;
   flex: 1;
   overflow-y: auto;
+  background: #f4f8f6;
 }
+
+/* ==================== DASHBOARD CARDS ==================== */
 
 .kpi-grid {
   display: grid;
@@ -140,17 +162,20 @@
 }
 
 .card {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: #ffffff;
+  border: 1px solid #dce8e3;
   border-radius: 12px;
   padding: 24px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
 }
 
 .card h3 {
   margin: 0 0 20px 0;
   font-size: 18px;
-  color: #f1f5f9;
+  color: #1f2933;
 }
+
+/* ==================== QUICK ACTIONS ==================== */
 
 .quick-actions {
   display: flex;
@@ -161,9 +186,9 @@
 .action-btn {
   padding: 12px 16px;
   border-radius: 8px;
-  border: 1px solid #334155;
-  background: #0f172a;
-  color: #e2e8f0;
+  border: 1px solid #dce8e3;
+  background: #ffffff;
+  color: #38514b;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -172,19 +197,21 @@
 }
 
 .action-btn:hover {
-  background: #1e293b;
-  border-color: #475569;
+  background: #eef6f3;
+  border-color: #c8d9d3;
 }
 
 .action-btn.primary {
-  background: #3b82f6;
-  border-color: #3b82f6;
+  background: #167c6a;
+  border-color: #167c6a;
   color: white;
 }
 
 .action-btn.primary:hover {
-  background: #2563eb;
+  background: #116052;
 }
+
+/* ==================== RECENT STUDENTS ==================== */
 
 .recent-list {
   list-style: none;
@@ -197,7 +224,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid #dce8e3;
 }
 
 .recent-list li:last-child {
@@ -212,13 +239,15 @@
 
 .student-info .name {
   font-weight: 500;
-  color: #f1f5f9;
+  color: #1f2933;
 }
 
 .student-info .email {
   font-size: 13px;
-  color: #94a3b8;
+  color: #617872;
 }
+
+/* ==================== STATUS ==================== */
 
 .status {
   font-size: 12px;
@@ -228,29 +257,33 @@
 }
 
 .status.active {
-  background: #064e3b;
-  color: #6ee7b7;
+  background: #dcfce7;
+  color: #15803d;
 }
 
 .status.inactive {
-  background: #7c2d12;
-  color: #fdba74;
+  background: #ffedd5;
+  color: #c2410c;
 }
+
+/* ==================== LOADING ==================== */
 
 .loading-screen {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #94a3b8;
-  background: #0f172a;
+  color: #617872;
+  background: #f4f8f6;
 }
 
-/* Responsive */
+/* ==================== RESPONSIVE ==================== */
+
 @media (max-width: 1100px) {
   .kpi-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
@@ -260,6 +293,7 @@
   .kpi-grid {
     grid-template-columns: 1fr;
   }
+
   .dashboard-content {
     padding: 16px;
   }

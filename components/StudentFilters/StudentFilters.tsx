@@ -43,7 +43,7 @@ export default function StudentFilters({ onChange }: StudentFiltersProps) {
         alignItems: "center",
         mb: 3,
         p: 2,
-        backgroundColor: "#1e293b",
+        backgroundColor: "#e8f3ef",
         borderRadius: 2,
       }}
     >
@@ -53,7 +53,7 @@ export default function StudentFilters({ onChange }: StudentFiltersProps) {
         placeholder="Name or email"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        sx={{ minWidth: 220 }}
+        sx={{ minWidth: 220, backgroundColor: "#ffffff" }}
       />
 
       <TextField
@@ -62,7 +62,7 @@ export default function StudentFilters({ onChange }: StudentFiltersProps) {
         label="Course"
         value={draft.course}
         onChange={(e) => setDraft((d) => ({ ...d, course: e.target.value }))}
-        sx={{ minWidth: 160 }}
+        sx={{ minWidth: 160, backgroundColor: "#ffffff" }}
       >
         <MenuItem value="">All</MenuItem>
         {COURSE_OPTIONS.map((course) => (
@@ -78,7 +78,7 @@ export default function StudentFilters({ onChange }: StudentFiltersProps) {
         label="Status"
         value={draft.status}
         onChange={(e) => setDraft((d) => ({ ...d, status: e.target.value }))}
-        sx={{ minWidth: 160 }}
+        sx={{ minWidth: 160, backgroundColor: "#ffffff" }}
       >
         <MenuItem value="">All</MenuItem>
         {STATUS_OPTIONS.map((status) => (
@@ -94,7 +94,7 @@ export default function StudentFilters({ onChange }: StudentFiltersProps) {
         label="Score"
         value={draft.scoreRange}
         onChange={(e) => setDraft((d) => ({ ...d, scoreRange: e.target.value }))}
-        sx={{ minWidth: 160 }}
+        sx={{ minWidth: 160, backgroundColor: "#ffffff" }}
       >
         <MenuItem value="">All</MenuItem>
         {SCORE_RANGES.map((range) => (
