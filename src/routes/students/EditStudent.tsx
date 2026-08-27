@@ -27,7 +27,8 @@ import {
 } from "@/types/student";
 
 export default function EditStudent() {
-  useRequireAuth();
+  useRequireAuth(["admin"]);
+  //useRequireAuth(["student"]);
 
   const router = useRouter();
   const params = useParams();

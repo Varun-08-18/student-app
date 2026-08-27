@@ -15,7 +15,7 @@ import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { computeStudentStats } from "../library/studentStats";
 
 export default function Dashboard() {
-  useRequireAuth();
+  useRequireAuth(["admin"]);
 
   const router = useRouter();
 

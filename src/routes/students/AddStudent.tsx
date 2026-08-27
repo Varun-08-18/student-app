@@ -13,8 +13,7 @@ import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { StudentInput } from "@/types/student";
 
 export default function AddStudent() {
-  useRequireAuth();
-
+  useRequireAuth(["admin"]);
   const router = useRouter();
 
   const {

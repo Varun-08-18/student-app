@@ -24,7 +24,7 @@ import {
 } from "../library/studentFilters";
 
 export default function Students() {
-  useRequireAuth();
+  useRequireAuth(["admin"]);
 
   const router = useRouter();
 
