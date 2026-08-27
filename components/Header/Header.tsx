@@ -6,7 +6,7 @@ import { useAppContext } from "@/context/AppContext";
 
 export default function Header() {
   const router = useRouter();
-  const { adminName } = useAppContext();
+  const { userName } = useAppContext();
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
@@ -28,7 +28,7 @@ export default function Header() {
       <Typography variant="h6">Student Management</Typography>
 
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <Typography>{adminName}</Typography>
+        <Typography>{userName}</Typography>
         <Button
           variant="outlined"
           color="error"
