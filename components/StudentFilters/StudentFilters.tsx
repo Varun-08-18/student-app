@@ -2,8 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { Box, TextField, MenuItem, Button } from "@mui/material";
-import { COURSE_OPTIONS, STATUS_OPTIONS, SCORE_RANGES } from "@/app/library/constants";
-import { EMPTY_FILTERS, StudentFilterState } from "@/app/library/studentFilters";
+
+import { EMPTY_FILTERS, StudentFilterState } from "@/src/routes/library/studentFilters";
+
+const COURSE_OPTIONS = ["Computer Science", "Mathematics", "Physics"];
+const STATUS_OPTIONS = ["Active", "Inactive", "Pending"];
+const SCORE_RANGES = [
+  { label: "0-49" },
+  { label: "50-69" },
+  { label: "70-89" },
+  { label: "90-100" },
+];
 
 interface StudentFiltersProps {
   onChange: (update: StudentFilterState | ((prev: StudentFilterState) => StudentFilterState)) => void;

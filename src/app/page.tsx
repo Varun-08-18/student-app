@@ -7,8 +7,14 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    router.replace(isLoggedIn ? "/dashboard" : "/login");
+    const isLoggedIn =
+      localStorage.getItem("isLoggedIn") === "true";
+
+    if (isLoggedIn) {
+      router.replace("/dashboard");
+    } else {
+      router.replace("/login");
+    }
   }, [router]);
 
   return null;

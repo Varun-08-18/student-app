@@ -11,14 +11,19 @@ import StudentTable from "@/components/StudentTable/StudentTable";
 
 import { useStudents } from "@/hooks/useStudents";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
-import { computeStudentStats } from "@/app/library/studentStats";
 
-export default function DashboardPage() {
+import { computeStudentStats } from "../library/studentStats";
+
+export default function Dashboard() {
   useRequireAuth();
 
   const router = useRouter();
 
-  const { students, loading, error } = useStudents();
+  const {
+    students,
+    loading,
+    error,
+  } = useStudents();
 
   const stats = useMemo(
     () => computeStudentStats(students),
@@ -39,7 +44,6 @@ export default function DashboardPage() {
         </Typography>
       ) : (
         <>
-          {/* Statistics */}
           <Box
             sx={{
               display: "flex",
@@ -74,11 +78,18 @@ export default function DashboardPage() {
             />
           </Box>
 
-          {/* Dashboard Actions */}
-          <Box sx={{ display: "flex", gap: 2, mb: 4 }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              mb: 4,
+            }}
+          >
             <Button
               variant="contained"
-              onClick={() => router.push("/students")}
+              onClick={() =>
+                router.push("/students")
+              }
             >
               View Students
             </Button>
@@ -86,25 +97,37 @@ export default function DashboardPage() {
             <Button
               variant="contained"
               color="success"
-              onClick={() => router.push("/students/add")}
+              onClick={() =>
+                router.push("/students/add")
+              }
             >
               Add Student
             </Button>
           </Box>
 
-          {/* Student Table */}
           <Box>
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography
+              variant="h6"
+              sx={{ mb: 2 }}
+            >
               Students
             </Typography>
 
-            <StudentTable students={students} onView={function (id: number): void {
-                  throw new Error("Function not implemented.");
-                } } onEdit={function (id: number): void {
-                  throw new Error("Function not implemented.");
-                } } onDelete={function (id: number): void {
-                  throw new Error("Function not implemented.");
-                } } />
+            <StudentTable
+              students={students}
+              onView={(id) =>
+                router.push(`/students/${id}`)
+              }
+              onEdit={(id) =>
+                router.push(`/students/${id}/edit`)
+              }
+              onDelete={(id) => {
+                console.log(
+                  "Delete student:",
+                  id
+                );
+              }}
+            />
           </Box>
         </>
       )}

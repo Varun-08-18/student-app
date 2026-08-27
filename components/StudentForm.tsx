@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 
 import { StudentInput } from "@/types/student";
-import { COURSE_OPTIONS, EXPERIENCE_OPTIONS } from "@/app/library/constants";
+import { COURSE_OPTIONS, EXPERIENCE_OPTIONS } from "@/src/routes/library/constants";
 
 const steps = ["Personal Information", "Course Information", "Confirmation"];
 
