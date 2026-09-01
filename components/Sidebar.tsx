@@ -6,6 +6,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import PersonIcon from "@mui/icons-material/Person";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import CampaignIcon from "@mui/icons-material/Campaign";
 
 export default function Sidebar() {
   const router = useRouter();
@@ -19,10 +20,12 @@ export default function Sidebar() {
   const adminMenu = [
     { label: "Dashboard", path: "/dashboard", icon: <DashboardIcon /> },
     { label: "Students", path: "/students", icon: <PeopleIcon /> },
+    { label: "Announcements", path: "/announcements", icon: <CampaignIcon /> },
   ];
 
   const studentMenu = [
     { label: "My Performance", path: "/student-dashboard", icon: <PersonIcon /> },
+    { label: "Announcements", path: "/announcements", icon: <CampaignIcon /> },
   ];
 
   const menuItems = role === "student" ? studentMenu : adminMenu;

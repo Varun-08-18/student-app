@@ -8,12 +8,15 @@ import {
   Chip,
   Button,
   TextField,
-  MenuItem,
-  Divider,
+  Avatar,
+  LinearProgress,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
+import PersonIcon from "@mui/icons-material/Person";
+import SchoolIcon from "@mui/icons-material/School";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import AppLayout from "@/components/Applayout/AppLayout";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { studentService } from "@/services/studentService";
@@ -28,7 +31,12 @@ export default function StudentDashboard() {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [formData, setFormData] = useState<Partial<StudentInput>>({});
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+  });
 
   useEffect(() => {
     const id = localStorage.getItem("studentId");
@@ -42,32 +50,15 @@ export default function StudentDashboard() {
           lastName: data.lastName,
           email: data.email,
           phone: data.phone,
-          dateOfBirth: data.dateOfBirth,
-          course: data.course,
-          batch: data.batch,
-          startDate: data.startDate,
-          trainer: data.trainer,
-          experience: data.experience,
-          status: data.status,
-          score: data.score,
-          pendingAssignments: data.pendingAssignments,
         });
       }
       setLoading(false);
     });
   }, []);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        name === "score" || name === "pendingAssignments"
-          ? Number(value)
-          : value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async () => {
@@ -75,15 +66,19 @@ export default function StudentDashboard() {
 
     try {
       setSaving(true);
-      const updated = await studentService.updateStudent(
-        student.id,
-        formData as StudentInput
-      );
+      const updatedData: StudentInput = {
+        ...student,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+      };
+      const updated = await studentService.updateStudent(student.id, updatedData);
       setStudent(updated);
       setIsEditing(false);
-      toast.success("Your information has been updated successfully!");
+      toast.success("Information updated successfully!");
     } catch {
-      toast.error("Failed to update. Please try again.");
+      toast.error("Failed to update");
     } finally {
       setSaving(false);
     }
@@ -96,15 +91,6 @@ export default function StudentDashboard() {
         lastName: student.lastName,
         email: student.email,
         phone: student.phone,
-        dateOfBirth: student.dateOfBirth,
-        course: student.course,
-        batch: student.batch,
-        startDate: student.startDate,
-        trainer: student.trainer,
-        experience: student.experience,
-        status: student.status,
-        score: student.score,
-        pendingAssignments: student.pendingAssignments,
       });
     }
     setIsEditing(false);
@@ -126,376 +112,301 @@ export default function StudentDashboard() {
     );
   }
 
-  // Common card style with hover effect
-  const cardStyle = {
-    p: 3,
-    borderRadius: 3,
-    border: "1px solid #e5e7eb",
-    backgroundColor: "#ffffff",
-    transition: "all 0.25s ease",
-    "&:hover": {
-      transform: "translateY(-4px)",
-      boxShadow: "0 12px 24px -8px rgba(22, 124, 106, 0.18)",
-      borderColor: "#cce5df",
-    },
-  };
-
   return (
     <AppLayout>
-      {/* Header */}
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 4,
-          flexWrap: "wrap",
-          gap: 2,
+          minHeight: "100%",
+          background: "linear-gradient(135deg, #f0fdfa 0%, #f8fafc 100%)",
+          p: { xs: 2, md: 3 },
+          borderRadius: 3,
         }}
       >
-        <Box>
-          <Typography
-            variant="h5"
-            sx={{ fontWeight: 700, color: "#183b36", letterSpacing: "-0.3px" }}
-          >
-            My Performance
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            View and update your personal information
-          </Typography>
-        </Box>
-
-        {!isEditing ? (
-          <Button
-            variant="contained"
-            startIcon={<EditIcon />}
-            onClick={() => setIsEditing(true)}
-            sx={{
-              backgroundColor: "#167c6a",
-              px: 3,
-              py: 1.3,
-              borderRadius: 2.5,
-              textTransform: "none",
-              fontWeight: 600,
-              boxShadow: "0 4px 12px rgba(22, 124, 106, 0.25)",
-              "&:hover": {
-                backgroundColor: "#126b5a",
-                boxShadow: "0 6px 16px rgba(22, 124, 106, 0.3)",
-              },
-            }}
-          >
-            Edit My Information
-          </Button>
-        ) : (
-          <Box sx={{ display: "flex", gap: 1.5 }}>
-            <Button
-              variant="outlined"
-              startIcon={<CloseIcon />}
-              onClick={handleCancel}
-              disabled={saving}
+        {/* ========== TOP GREETING ========== */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 4,
+            flexWrap: "wrap",
+            gap: 2,
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Avatar
               sx={{
-                borderColor: "#d1d5db",
-                color: "#374151",
-                textTransform: "none",
-                borderRadius: 2.5,
-                px: 2.5,
+                width: 64,
+                height: 64,
+                bgcolor: "#167c6a",
+                fontSize: 28,
+                fontWeight: 700,
               }}
             >
-              Cancel
-            </Button>
+              {student.firstName?.[0]}
+              {student.lastName?.[0]}
+            </Avatar>
+            <Box>
+              <Typography variant="h5" sx={{ fontWeight: 700, color: "#0f172a" }}>
+                Hello, {student.firstName}!
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Here's your performance overview
+              </Typography>
+            </Box>
+          </Box>
+
+          {!isEditing ? (
             <Button
               variant="contained"
-              startIcon={<SaveIcon />}
-              onClick={handleSave}
-              disabled={saving}
+              startIcon={<EditIcon />}
+              onClick={() => setIsEditing(true)}
               sx={{
                 backgroundColor: "#167c6a",
-                px: 3,
+                borderRadius: 3,
                 textTransform: "none",
-                borderRadius: 2.5,
+                px: 3,
+                py: 1.2,
                 fontWeight: 600,
-                boxShadow: "0 4px 12px rgba(22, 124, 106, 0.25)",
-                "&:hover": {
-                  backgroundColor: "#126b5a",
-                },
+                boxShadow: "0 8px 20px rgba(22,124,106,0.25)",
+                "&:hover": { backgroundColor: "#126b5a" },
               }}
             >
-              {saving ? "Saving..." : "Save Changes"}
+              Edit Profile
             </Button>
-          </Box>
-        )}
-      </Box>
-
-      {/* Cards Grid */}
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr",
-            md: "1fr 1fr",
-            lg: "1fr 1fr 1fr",
-          },
-          gap: 3,
-        }}
-      >
-        {/* ========== PERSONAL DETAILS ========== */}
-        <Paper elevation={0} sx={cardStyle}>
-          <Typography
-            variant="subtitle1"
-            sx={{ fontWeight: 700, color: "#183b36", mb: 1.5 }}
-          >
-            Personal Details
-          </Typography>
-          <Divider sx={{ mb: 2.5, borderColor: "#f0f0f0" }} />
-
-          {isEditing ? (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <TextField
-                fullWidth
-                size="small"
-                label="First Name"
-                name="firstName"
-                value={formData.firstName || ""}
-                onChange={handleChange}
-              />
-              <TextField
-                fullWidth
-                size="small"
-                label="Last Name"
-                name="lastName"
-                value={formData.lastName || ""}
-                onChange={handleChange}
-              />
-              <TextField
-                fullWidth
-                size="small"
-                label="Email"
-                name="email"
-                value={formData.email || ""}
-                onChange={handleChange}
-              />
-              <TextField
-                fullWidth
-                size="small"
-                label="Phone"
-                name="phone"
-                value={formData.phone || ""}
-                onChange={handleChange}
-              />
-              <TextField
-                fullWidth
-                size="small"
-                label="Date of Birth"
-                name="dateOfBirth"
-                type="date"
-                value={formData.dateOfBirth || ""}
-                onChange={handleChange}
-                slotProps={{ inputLabel: { shrink: true } }}
-              />
-            </Box>
           ) : (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.8 }}>
-              <InfoRow
-                label="Name"
-                value={`${student.firstName} ${student.lastName}`}
-              />
-              <InfoRow label="Email" value={student.email} />
-              <InfoRow label="Phone" value={student.phone} />
-              <InfoRow label="Date of Birth" value={student.dateOfBirth} />
-            </Box>
-          )}
-        </Paper>
-
-        {/* ========== COURSE INFO ========== */}
-        <Paper elevation={0} sx={cardStyle}>
-          <Typography
-            variant="subtitle1"
-            sx={{ fontWeight: 700, color: "#183b36", mb: 1.5 }}
-          >
-            Course Info
-          </Typography>
-          <Divider sx={{ mb: 2.5, borderColor: "#f0f0f0" }} />
-
-          {isEditing ? (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <TextField
-                fullWidth
-                size="small"
-                label="Course"
-                name="course"
-                value={formData.course || ""}
-                onChange={handleChange}
-              />
-              <TextField
-                fullWidth
-                size="small"
-                label="Batch"
-                name="batch"
-                value={formData.batch || ""}
-                onChange={handleChange}
-              />
-              <TextField
-                fullWidth
-                size="small"
-                label="Trainer"
-                name="trainer"
-                value={formData.trainer || ""}
-                onChange={handleChange}
-              />
-              <TextField
-                fullWidth
-                size="small"
-                label="Start Date"
-                name="startDate"
-                type="date"
-                value={formData.startDate || ""}
-                onChange={handleChange}
-                slotProps={{ inputLabel: { shrink: true } }}
-              />
-              <TextField
-                fullWidth
-                size="small"
-                select
-                label="Status"
-                name="status"
-                value={formData.status || "Active"}
-                onChange={handleChange}
+            <Box sx={{ display: "flex", gap: 1.5 }}>
+              <Button
+                variant="outlined"
+                startIcon={<CloseIcon />}
+                onClick={handleCancel}
+                disabled={saving}
+                sx={{ borderRadius: 3, textTransform: "none" }}
               >
-                <MenuItem value="Active">Active</MenuItem>
-                <MenuItem value="Completed">Completed</MenuItem>
-                <MenuItem value="Inactive">Inactive</MenuItem>
-              </TextField>
-            </Box>
-          ) : (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.8 }}>
-              <InfoRow label="Course" value={student.course} />
-              <InfoRow label="Batch" value={student.batch} />
-              <InfoRow label="Trainer" value={student.trainer} />
-              <InfoRow label="Start Date" value={student.startDate} />
-              <Box
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                startIcon={<SaveIcon />}
+                onClick={handleSave}
+                disabled={saving}
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  backgroundColor: "#167c6a",
+                  borderRadius: 3,
+                  textTransform: "none",
+                  fontWeight: 600,
                 }}
               >
-                <Typography variant="body2" color="text.secondary">
-                  Status
-                </Typography>
-                <Chip
-                  label={student.status}
-                  size="small"
-                  sx={{
-                    fontWeight: 600,
-                    ...(student.status === "Active" && {
-                      backgroundColor: "#d1fae5",
-                      color: "#065f46",
-                    }),
-                    ...(student.status === "Completed" && {
-                      backgroundColor: "#dbeafe",
-                      color: "#1e40af",
-                    }),
-                  }}
-                />
-              </Box>
+                {saving ? "Saving..." : "Save"}
+              </Button>
             </Box>
           )}
-        </Paper>
+        </Box>
 
-        {/* ========== PERFORMANCE ========== */}
-        <Paper elevation={0} sx={cardStyle}>
-          <Typography
-            variant="subtitle1"
-            sx={{ fontWeight: 700, color: "#183b36", mb: 1.5 }}
+        {/* ========== MAIN GRID ========== */}
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", lg: "1.2fr 1fr" },
+            gap: 3,
+          }}
+        >
+          {/* LEFT COLUMN */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            {/* Personal Info Card */}
+            <Paper
+              elevation={0}
+              sx={{
+                p: 3,
+                borderRadius: 4,
+                backgroundColor: "white",
+                border: "1px solid #e2e8f0",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 3 }}>
+                <PersonIcon sx={{ color: "#167c6a" }} />
+                <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  Personal Information
+                </Typography>
+              </Box>
+
+              {isEditing ? (
+                <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
+                  <TextField
+                    size="small"
+                    label="First Name"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    fullWidth
+                  />
+                  <TextField
+                    size="small"
+                    label="Last Name"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    fullWidth
+                  />
+                  <TextField
+                    size="small"
+                    label="Email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    fullWidth
+                    sx={{ gridColumn: "1 / -1" }}
+                  />
+                  <TextField
+                    size="small"
+                    label="Phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    fullWidth
+                    sx={{ gridColumn: "1 / -1" }}
+                  />
+                </Box>
+              ) : (
+                <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2.5 }}>
+                  <InfoItem label="Full Name" value={`${student.firstName} ${student.lastName}`} />
+                  <InfoItem label="Email" value={student.email} />
+                  <InfoItem label="Phone" value={student.phone} />
+                  <InfoItem label="Date of Birth" value={student.dateOfBirth} />
+                </Box>
+              )}
+            </Paper>
+
+            {/* Course Card */}
+            <Paper
+              elevation={0}
+              sx={{
+                p: 3,
+                borderRadius: 4,
+                backgroundColor: "white",
+                border: "1px solid #e2e8f0",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 3 }}>
+                <SchoolIcon sx={{ color: "#167c6a" }} />
+                <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  Course Details
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2.5 }}>
+                <InfoItem label="Course" value={student.course} />
+                <InfoItem label="Batch" value={student.batch} />
+                <InfoItem label="Trainer" value={student.trainer} />
+                <InfoItem label="Start Date" value={student.startDate} />
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    Status
+                  </Typography>
+                  <Box sx={{ mt: 0.5 }}>
+                    <Chip
+                      label={student.status}
+                      size="small"
+                      sx={{
+                        fontWeight: 600,
+                        ...(student.status === "Active" && {
+                          bgcolor: "#d1fae5",
+                          color: "#065f46",
+                        }),
+                        ...(student.status === "Completed" && {
+                          bgcolor: "#dbeafe",
+                          color: "#1e40af",
+                        }),
+                      }}
+                    />
+                  </Box>
+                </Box>
+              </Box>
+            </Paper>
+          </Box>
+
+          {/* RIGHT COLUMN - Score Card */}
+          <Paper
+            elevation={0}
+            sx={{
+              p: 4,
+              borderRadius: 4,
+              background: "linear-gradient(145deg, #167c6a 0%, #0f766e 100%)",
+              color: "white",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              minHeight: 380,
+              boxShadow: "0 20px 40px rgba(22,124,106,0.25)",
+            }}
           >
-            Performance
-          </Typography>
-          <Divider sx={{ mb: 2.5, borderColor: "#f0f0f0" }} />
-
-          {isEditing ? (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <TextField
-                fullWidth
-                size="small"
-                label="Score (%)"
-                name="score"
-                type="number"
-                value={formData.score ?? ""}
-                onChange={handleChange}
-                slotProps={{ htmlInput: { min: 0, max: 100 } }}
-              />
-              <TextField
-                fullWidth
-                size="small"
-                label="Pending Assignments"
-                name="pendingAssignments"
-                type="number"
-                value={formData.pendingAssignments ?? ""}
-                onChange={handleChange}
-                slotProps={{ htmlInput: { min: 0 } }}
-              />
-            </Box>
-          ) : (
             <Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
+                <AssignmentIcon />
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  Performance
+                </Typography>
+              </Box>
+              <Typography variant="body2" sx={{ opacity: 0.85 }}>
+                Your current progress
+              </Typography>
+            </Box>
+
+            <Box sx={{ textAlign: "center", my: 3 }}>
               <Typography
-                variant="h2"
+                variant="h1"
                 sx={{
                   fontWeight: 800,
-                  color: "#167c6a",
+                  fontSize: { xs: "4rem", md: "5rem" },
                   lineHeight: 1,
-                  mb: 0.5,
                 }}
               >
-                {student.score}%
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                Overall Score
-              </Typography>
-
-              <Box
-                sx={{
-                  backgroundColor: "#f0fdfa",
-                  borderRadius: 2,
-                  p: 2,
-                  border: "1px solid #ccfbf1",
-                }}
-              >
-                <Typography variant="body2" color="text.secondary">
-                  Pending Assignments
+                {student.score}
+                <Typography component="span" sx={{ fontSize: "2rem", opacity: 0.8 }}>
+                  %
                 </Typography>
-                <Typography
-                  variant="h5"
-                  sx={{ fontWeight: 700, color: "#0f766e", mt: 0.5 }}
-                >
+              </Typography>
+              <Typography sx={{ mt: 1, opacity: 0.9 }}>Overall Score</Typography>
+            </Box>
+
+            <Box>
+              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+                <Typography variant="body2">Pending Assignments</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 700 }}>
                   {student.pendingAssignments}
                 </Typography>
               </Box>
+              <LinearProgress
+                variant="determinate"
+                value={Math.min(100, student.score)}
+                sx={{
+                  height: 10,
+                  borderRadius: 5,
+                  backgroundColor: "rgba(255,255,255,0.2)",
+                  "& .MuiLinearProgress-bar": {
+                    backgroundColor: "white",
+                    borderRadius: 5,
+                  },
+                }}
+              />
             </Box>
-          )}
-        </Paper>
+          </Paper>
+        </Box>
       </Box>
     </AppLayout>
   );
 }
 
-function InfoRow({ label, value }: { label: string; value: string }) {
+function InfoItem({ label, value }: { label: string; value: string }) {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: 2,
-      }}
-    >
-      <Typography variant="body2" color="text.secondary">
+    <Box>
+      <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
         {label}
       </Typography>
-      <Typography
-        variant="body2"
-        sx={{ fontWeight: 600, color: "#1f2937", textAlign: "right" }}
-      >
-        {value}
+      <Typography variant="body1" sx={{ fontWeight: 600, color: "#0f172a", mt: 0.3 }}>
+        {value || "—"}
       </Typography>
     </Box>
   );
